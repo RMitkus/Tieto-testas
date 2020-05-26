@@ -34,9 +34,11 @@ addToTable = (fact, i) => {
   row.classList.add("w-100");
   const tableData1 = row.insertCell();
   const tableData2 = row.insertCell();
+  // For some reason fact must go through catChanger three times to change all 'cats' into dogs
   const newFact = catChanger(fact);
+  const newDoggoFact = catChanger(newFact);
   tableData1.textContent = i + 1;
-  tableData2.textContent = newFact;
+  tableData2.textContent = newDoggoFact;
 };
 
 // Pagination and fetch setup
@@ -56,8 +58,8 @@ addPaginationPages(pagesNum);
 
 // Pagination event listener
 const pages = document.querySelectorAll("a");
-pages.forEach((element) => {
-  element.addEventListener("click", (e) => {
+pages.forEach((page) => {
+  page.addEventListener("click", (e) => {
     e.preventDefault();
     // loader on/off
     document.getElementById("spin").classList.replace("d-none", "d-block");
@@ -65,15 +67,15 @@ pages.forEach((element) => {
     // Load new doggos facts
     fetchApi(startingFacts, fetchNumberFacts);
     // Refresh active class
-    pages.forEach((element) => {
-      element.parentElement.classList.remove("active");
+    pages.forEach((page) => {
+      page.parentElement.classList.remove("active");
     });
     // Set active class
-    element.parentElement.classList.add("active");
+    page.parentElement.classList.add("active");
   });
 
   // Calculations for fetching
-  const fetchNumberFacts = element.id * factsPerPage;
+  const fetchNumberFacts = page.id * factsPerPage;
   const startingFacts = fetchNumberFacts - 15;
 });
 
@@ -85,10 +87,10 @@ fetchApi = (startingFacts, facts) => {
     .then((data) => {
       // loader on/off
       document.getElementById("spin").classList.replace("d-block", "d-none");
-      addToTable(data[10].text, 11);
-      // for (let i = startingFacts; i < facts; i++) {
-      //   addToTable(data[i].text, i);
-      // }
+      for (let i = startingFacts; i < facts; i++) {
+        const dogFact = catChanger(data[i].text);
+        addToTable(dogFact, i);
+      }
     })
     .catch((err) => console.log(`Įvyko klaida gaunant duomenis: ${err}`));
 };
