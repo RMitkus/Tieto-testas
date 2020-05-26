@@ -1,27 +1,27 @@
 // Cat changer to Doggo
 catChanger = (fact) => {
   if (fact.includes("Cats")) {
-    return fact.split("Cats").join("Dogs");
-  } else if (fact.includes("cats")) {
-    return fact.split("cats").join("dogs");
-  } else if (fact.includes("kittens")) {
-    return fact.split("kittens").join("puppies");
-  } else if (fact.includes("Kittens")) {
-    return fact.split("Kittens").join("Puppies");
-  } else if (fact.includes("cat's")) {
-    return fact.split("cat's").join("dog's");
-  } else if (fact.includes("cat")) {
-    return fact.split("cat").join("dog");
-  } else if (fact.includes("Cat")) {
-    return fact.split("Cat").join("Dog");
-  } else if (fact.includes("gato")) {
-    return fact.split("gato").join("Perro");
-  } else if (fact.includes("kitty")) {
-    return fact.split("kitty").join("puppy");
-  } else if (fact.includes("hairball")) {
-    return fact.split("hairball").join("doggo");
-  } else if (fact.includes("tigers")) {
-    return fact.split("tiger").join("doggos");
+    return fact.trim().replace(/Cats/g, "Dogs");
+  } else if (fact.trim().includes("cats")) {
+    return fact.trim().replace(/cats/g, "dogs");
+  } else if (fact.trim().includes("kittens")) {
+    return fact.trim().replace(/kittens/g, "puppies");
+  } else if (fact.trim().includes("Kittens")) {
+    return fact.trim().replace(/Kittens/g, "Puppies");
+  } else if (fact.trim().includes("cat's")) {
+    return fact.trim().replace(/cat's/g, "dog's");
+  } else if (fact.trim().includes("cat")) {
+    return fact.trim().replace(/cat/g, "dog");
+  } else if (fact.trim().includes("Cat")) {
+    return fact.trim().replace(/Cat/g, "Dog");
+  } else if (fact.trim().includes("gato")) {
+    return fact.trim().replace(/gato/g, "Perro");
+  } else if (fact.trim().includes("kitty")) {
+    return fact.trim().replace(/kitty/g, "puppy");
+  } else if (fact.trim().includes("hairball")) {
+    return fact.trim().replace(/hairball/g, "doggo");
+  } else if (fact.trim().includes("tigers")) {
+    return fact.trim().replace(/tiger/g, "doggos");
   } else {
     return fact;
   }
@@ -34,8 +34,9 @@ addToTable = (fact, i) => {
   row.classList.add("w-100");
   const tableData1 = row.insertCell();
   const tableData2 = row.insertCell();
+  const newFact = catChanger(fact);
   tableData1.textContent = i + 1;
-  tableData2.textContent = catChanger(fact);
+  tableData2.textContent = newFact;
 };
 
 // Pagination and fetch setup
@@ -58,6 +59,7 @@ const pages = document.querySelectorAll("a");
 pages.forEach((element) => {
   element.addEventListener("click", (e) => {
     e.preventDefault();
+    // loader on/off
     document.getElementById("spin").classList.replace("d-none", "d-block");
     table.textContent = "";
     // Load new doggos facts
@@ -81,11 +83,12 @@ fetchApi = (startingFacts, facts) => {
     .then((response) => response.json())
     .then((data) => data.all)
     .then((data) => {
+      // loader on/off
       document.getElementById("spin").classList.replace("d-block", "d-none");
-      for (let i = startingFacts; i < facts; i++) {
-        console.log(data[i].text);
-        addToTable(data[i].text, i);
-      }
+      addToTable(data[10].text, 11);
+      // for (let i = startingFacts; i < facts; i++) {
+      //   addToTable(data[i].text, i);
+      // }
     })
     .catch((err) => console.log(`Įvyko klaida gaunant duomenis: ${err}`));
 };
@@ -93,3 +96,13 @@ fetchApi = (startingFacts, facts) => {
 // Initial API request
 fetchApi(loadingIndex, factsPerPage);
 document.querySelector("li").classList.add("active");
+
+//Random fact
+
+fetch("https://cat-fact.herokuapp.com/facts/random")
+  .then((response) => response.json())
+  .then((data) => {
+    const randFact = document.getElementById("randFact");
+    randFact.textContent = catChanger(data.text);
+  })
+  .catch((err) => console.log(`Įvyko klaida gaunant duomenis: ${err}`));
